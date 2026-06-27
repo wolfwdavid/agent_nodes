@@ -48,8 +48,18 @@ For the automated paths (1 and 2) to open PRs, the repo needs:
 - [`scripts/factory.sh`](../scripts/factory.sh) — the generator (templates are inline; edit here to customize).
 - [`.github/workflows/factory.yml`](../.github/workflows/factory.yml) — triggers on the `factory` label or manual dispatch.
 
+## Choosing the stub language
+
+Set `STUB_LANG` to control the generated code-stub file. Supported values: `py` (default),
+`js`, `ts`, `go`.
+
+```bash
+STUB_LANG=js bash scripts/factory.sh <issue-number>   # emits <slug>.js
+```
+
+With no `STUB_LANG`, the stub stays Python. An unsupported value exits with an error.
+
 ## Customizing the templates
 
-Open `scripts/factory.sh` and edit the heredocs for `SPEC.md`, `PLAN.md`, and the code stub.
-To change the stub language, swap the `.py` filename and the heredoc body — the slug/function-name
-derivation works for any language.
+Open `scripts/factory.sh` and edit the heredocs for `SPEC.md`, `PLAN.md`, and the per-language
+code stubs. To add another language, add a `case` branch in the code-stub section.
