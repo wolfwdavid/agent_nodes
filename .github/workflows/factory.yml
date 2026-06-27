@@ -1,0 +1,31 @@
+name: AI-free templated factory
+
+# Runs the deterministic issue -> spec/plan/code scaffolder.
+# Free: runs on GitHub-hosted runners, uses the built-in GITHUB_TOKEN, no external API.
+on:
+  issues:
+    types: [labeled]          # fires when an issue gets the "factory" label
+  workflow_dispatch:           # or run manually from the Actions tab
+    inputs:
+      issue:
+        description: "Issue number to scaffold"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  scaffold:
+    # Only on manual runs, or when the label just added is "factory"
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.label.name == 'factory' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scaffold from issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: bash scripts/factory.sh "${{ github.event.issue.number || github.event.inputs.issue }}"
